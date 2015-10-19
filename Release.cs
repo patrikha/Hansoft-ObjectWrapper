@@ -129,6 +129,28 @@ namespace Hansoft.ObjectWrapper
             }
         }
 
+        public struct Summary
+        {
+            public IEnumerable<Task> dependentTasks;
+            public int points;
+            public int pointNotDone;
+            public double durationDays;
+            public double durationDaysNotDone;
+        }
+
+        public Summary GetSummary()
+        {
+            var rawSummary = Session.TaskRefGetMilestoneSummary(UniqueID);
+            return new Summary()
+            {
+                dependentTasks = rawSummary.m_MilestoneDependantIDs.Select(id => Task.GetTask(id)),
+                points = (int)rawSummary.m_Points,
+                pointNotDone = (int)rawSummary.m_Points_NotDone,
+                durationDays = rawSummary.m_DurationDays,
+                durationDaysNotDone = rawSummary.m_DurationDays_NotDone
+            };
+        }
+
         /// <summary>
         /// Get all items currently contributing to the burndown, i.e., the items that either are in a sprint tagged to
         /// the release, or items that are not committed to a sprint but tagged to the release in the product backlog.

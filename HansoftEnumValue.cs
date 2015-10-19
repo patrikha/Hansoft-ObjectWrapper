@@ -130,7 +130,7 @@ namespace Hansoft.ObjectWrapper
         public override bool Equals(object obj)
         {
             if (obj is HansoftEnumValue)
-                return Value.Equals(((HansoftEnumValue)obj).Value);
+                return iValue.Equals(((HansoftEnumValue)obj).iValue);
             else if (obj.GetType() == Value.GetType())
                 return Value.Equals(obj);
             else if (obj is string)

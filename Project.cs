@@ -45,6 +45,15 @@ namespace Hansoft.ObjectWrapper
             }
         }
 
+        public EHPMProjectDefaultEditorMode DefaultEditorMode
+        {
+            get
+            {
+                HPMProjectProperties props = Session.ProjectGetProperties(UniqueID);
+                return props.m_DefaultEditorMode;
+            }
+        }
+
         HPMUniqueID QAProjectID
         {
             get

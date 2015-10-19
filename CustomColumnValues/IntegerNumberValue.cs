@@ -94,6 +94,8 @@ namespace Hansoft.ObjectWrapper.CustomColumnValues
         {
             if (obj is IntegerNumberValue)
                 return integerValue.CompareTo(((IntegerNumberValue)obj).integerValue);
+            else if (obj is int && InternalValue == string.Empty)
+                    return 1;
             else if (obj is int)
                 return integerValue.CompareTo((int)obj);
             else

@@ -76,6 +76,9 @@ namespace Hansoft.ObjectWrapper.CustomColumnValues
         /// <returns>The CustomColumn value corresponding to the given parameters.</returns>
         public static CustomColumnValue FromInternalValue(Task task, HPMProjectCustomColumnsColumn customColumn, string internalValue)
         {
+            if ((customColumn == null)) {
+                return null;
+            }
             switch (customColumn.m_Type)
             {
                 case EHPMProjectCustomColumnsColumnType.AccumulatedTime:

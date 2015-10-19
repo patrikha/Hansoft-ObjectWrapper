@@ -34,6 +34,49 @@ namespace Hansoft.ObjectWrapper
         }
 
 
+        public Tuple<DateTime, DateTime> TimeZone
+        {
+            get
+            {
+                HPMTaskTimeZones tzData = Session.TaskGetTimeZones(UniqueTaskID);
+                return new Tuple<DateTime, DateTime>(HPMUtilities.FromHPMDateTime(tzData.m_Zones[0].m_Start), HPMUtilities.FromHPMDateTime(tzData.m_Zones[0].m_End));
+            }
+            set
+            {
+                if (!TimeZone.Equals(value))
+                {
+                    HPMTaskTimeZonesZone tz = new HPMTaskTimeZonesZone();
+                    tz.m_Start = HPMUtilities.HPMDateTime(value.Item1);
+                    tz.m_End = HPMUtilities.HPMDateTime(value.Item2);
+                    HPMTaskTimeZones tzData = new HPMTaskTimeZones();
+                    tzData.m_Zones = new HPMTaskTimeZonesZone[] { tz };
+                    Session.TaskSetTimeZones(UniqueTaskID, tzData, true);
+                }
+            }
+        }
+
+        public DateTime Start
+        {
+            get { return TimeZone.Item1; }
+            set
+            {
+                var tz = TimeZone;
+                if (!tz.Item1.Equals(value))
+                    TimeZone = new Tuple<DateTime, DateTime>(value, tz.Item2);
+            }
+        }
+
+        public DateTime Finish
+        {
+            get { return TimeZone.Item2; }
+            set
+            {
+                var tz = TimeZone;
+                if (!tz.Item2.Equals(value))
+                    TimeZone = new Tuple<DateTime, DateTime>(tz.Item1, value);
+            }
+        }
+
         /// <summary>
         /// The Duaration of the task
         /// </summary>

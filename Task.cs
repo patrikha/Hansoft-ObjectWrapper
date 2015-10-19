@@ -366,6 +366,24 @@ namespace Hansoft.ObjectWrapper
         }
 
         /// <summary>
+        /// Color of task in client.
+        /// </summary>
+        public System.Drawing.Color Color
+        {
+            get { return System.Drawing.Color.FromArgb((int)Session.TaskGetColor(UniqueTaskID)); }
+            set { Session.TaskSetColor(UniqueTaskID, (uint)(value.ToArgb() & 0x00FFFFFF)); }
+        }
+
+        /// <summary>
+        /// Color of wall item in client.
+        /// </summary>
+        public EHPMTaskWallItemColor WallItemColor
+        {
+            get { return Session.TaskGetWallItemColor(UniqueTaskID); }
+            set { Session.TaskSetWallItemColor(UniqueTaskID, value); }
+        }
+
+        /// <summary>
         /// The builtin column Confidence.
         /// </summary>
         public HansoftEnumValue Confidence
@@ -425,7 +443,7 @@ namespace Hansoft.ObjectWrapper
             }
             set
             {
-                if (Status != value) Session.TaskSetStatus(UniqueTaskID, (EHPMTaskStatus)value.Value, true, EHPMTaskSetStatusFlag.All);
+                if (!Status.Equals(value)) Session.TaskSetStatus(UniqueTaskID, (EHPMTaskStatus)value.Value, true, EHPMTaskSetStatusFlag.All);
             }
         }
 
@@ -469,13 +487,31 @@ namespace Hansoft.ObjectWrapper
         /// </summary>
         public virtual int AggregatedPoints
         {
-            get
-            {
-                if (HasChildren)
-                    return Session.TaskRefGetSummary(UniqueID).m_ComplexityPoints;
-                else
-                    return Points;
-            }
+            get { return Session.TaskRefGetSummary(UniqueID).m_ComplexityPoints; }
+        }
+
+        /// <summary>
+        /// The aggregated points not done value over all children as it is displayed in the Hansoft client
+        /// </summary>
+        public virtual int AggregatedPointsNotDone
+        {
+            get { return Session.TaskRefGetSummary(UniqueID).m_ComplexityPoints_NotDone; }
+        }
+
+        /// <summary>
+        /// The aggregated duration in days over all children as it is displayed in the Hansoft client
+        /// </summary>
+        public virtual double AggregatedDuration
+        {
+            get { return Session.TaskRefGetSummary(UniqueID).m_DurationDays; }
+        }
+
+        /// <summary>
+        /// The aggregated duration in days not done over all children as it is displayed in the Hansoft client
+        /// </summary>
+        public virtual double AggregatedDurationNotDone
+        {
+            get { return Session.TaskRefGetSummary(UniqueID).m_DurationDays_NotDone; }
         }
 
         /// <summary>
@@ -542,9 +578,28 @@ namespace Hansoft.ObjectWrapper
         /// <summary>
         /// The builtin column Percent complete.
         /// </summary>
-        public double PercentComplete
+        public int PercentComplete
         {
             get { return Session.TaskGetPercentComplete(UniqueTaskID); }
+            set { if (PercentComplete != value) Session.TaskSetPercentComplete(UniqueTaskID, value); }
+        }
+
+        /// <summary>
+        /// The builtin column Completed (not visible in UI).
+        /// </summary>
+        public bool IsCompleted
+        {
+            get { return Session.TaskGetCompleted(UniqueTaskID); }
+            set { if (IsCompleted != value) Session.TaskSetCompleted(UniqueTaskID, value, false); }
+        }
+
+        /// <summary>
+        /// The builtin column BudgetedWork.
+        /// </summary>
+        public int BudgetedWork
+        {
+            get { return Session.TaskGetBudgetedWork(UniqueTaskID); }
+            set { if (BudgetedWork != value) Session.TaskSetBudgetedWork(UniqueTaskID, value); }
         }
 
         /// <summary>
@@ -578,6 +633,20 @@ namespace Hansoft.ObjectWrapper
         }
 
         /// <summary>
+        /// Get the name of any attached workflow as string.
+        /// </summary>
+        public string WorkflowName
+        {
+            get
+            {
+                int workFlowID = (int)Session.TaskGetWorkflow(UniqueTaskID);
+                if (workFlowID == -1)
+                    return "";
+                return Session.ProjectWorkflowGetSettings(MainProjectID, (uint)workFlowID).m_Properties.m_Name;
+            }
+        }
+
+        /// <summary>
         /// Gets the status of any attached workflow as an integer.
         /// </summary>
         public int WorkflowStatus
@@ -585,6 +654,18 @@ namespace Hansoft.ObjectWrapper
             get
             {
                 return Session.TaskGetWorkflowStatus(UniqueTaskID);
+            }
+        }
+
+        /// <summary>
+        /// Get the status if any attached pipeline
+        /// </summary>
+        public bool HasPipeline
+        { 
+            get
+            {
+                int pipelineID = (int)Session.TaskGetLinkedToPipelineTask(UniqueTaskID);
+                return pipelineID != -1;
             }
         }
 
@@ -755,6 +836,10 @@ namespace Hansoft.ObjectWrapper
                     return Name;
                 case EHPMProjectDefaultColumn.WorkRemaining:
                     return WorkRemaining;
+                case EHPMProjectDefaultColumn.IsCompleted:
+                    return IsCompleted;
+                case EHPMProjectDefaultColumn.BudgetedWork:
+                    return BudgetedWork;
                 default:
                     throw new ArgumentException("Unsupported default column in GetDefaultColumnValue/1: " + eHPMProjectDefaultColumn);
             }
@@ -798,6 +883,12 @@ namespace Hansoft.ObjectWrapper
                     break;
                 case EHPMProjectDefaultColumn.WorkRemaining:
                     WorkRemaining = Convert.ToDouble(sourceValue, new System.Globalization.CultureInfo("en-US"));
+                    break;
+                case EHPMProjectDefaultColumn.IsCompleted:
+                    IsCompleted = Convert.ToBoolean(sourceValue);
+                    break;
+                case EHPMProjectDefaultColumn.BudgetedWork:
+                    BudgetedWork = Convert.ToInt32(sourceValue);
                     break;
                 default:
                     throw new ArgumentException("Unsupported default column in GetDefaultColumnValue/1: " + eHPMProjectDefaultColumn);
