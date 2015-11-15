@@ -121,7 +121,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y $(TargtedDir)$(TargetFileName)    $(ProjectDir)..\Runnable
+    <PostBuildEvent>copy /Y $(TargetDir)$(TargetFileName)    $(ProjectDir)..\Runnable
 cd $(ProjectDir)
 doxygen DoxySettings
 call GenerateHelp.bat

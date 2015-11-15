@@ -214,10 +214,11 @@ namespace Hansoft.ObjectWrapper
         {
             TimeSpan Span = utc - t1970;
             UInt64 microSeconds = (UInt64)(Span.Ticks / 10);
-            UInt64 microSecondsInADay = ((ulong)(24 * 60 * 60) * 1000000);
             if (alignedOnWholeDay)
+            {
+                UInt64 microSecondsInADay = ((ulong)(24 * 60 * 60) * 1000000);
                 microSeconds = (microSeconds / microSecondsInADay) * microSecondsInADay;
-
+            }
             return microSeconds;
         }
 

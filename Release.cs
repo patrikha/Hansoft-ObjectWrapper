@@ -69,7 +69,15 @@ namespace Hansoft.ObjectWrapper
                 HPMTaskTimeZones tzData = Session.TaskGetTimeZones(UniqueTaskID);
                 return HPMUtilities.FromHPMDateTime(tzData.m_Zones[0].m_Start);
             }
-            //TODO: Implement the setter.
+            set
+            {
+                HPMTaskTimeZonesZone tz = new HPMTaskTimeZonesZone();
+                tz.m_Start = HPMUtilities.HPMDateTime(value);
+                tz.m_End = tz.m_Start;
+                HPMTaskTimeZones tzData = new HPMTaskTimeZones();
+                tzData.m_Zones = new HPMTaskTimeZonesZone[] { tz };
+                Session.TaskSetTimeZones(UniqueTaskID, tzData, true);
+            }
         }
 
         /// <summary>
