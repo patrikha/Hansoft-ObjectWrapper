@@ -369,10 +369,6 @@ namespace Hansoft.ObjectWrapper
             CloneReports(this.ProductBacklog.UniqueID, newProject.ProductBacklog.UniqueID);
             CloneReports(this.BugTracker.UniqueID, newProject.BugTracker.UniqueID);
 
-            ClonePresets(this.Schedule.UniqueID, newProject.Schedule.UniqueID);
-            ClonePresets(this.ProductBacklog.UniqueID, newProject.ProductBacklog.UniqueID);
-            ClonePresets(this.BugTracker.UniqueID, newProject.BugTracker.UniqueID);
-
             CloneWorkflows(this.UniqueID, newProject.UniqueID);
 
             CloneChildTasks(this.Schedule, newProject.Schedule, newProject.Schedule, Session.ProjectCustomColumnsGet(this.Schedule.UniqueID));
@@ -390,18 +386,13 @@ namespace Hansoft.ObjectWrapper
 
         private void CloneColumns(HPMUniqueID sourceProjectID, HPMUniqueID targetProjectID)
         {
-            Session.ProjectCustomColumnsSet(targetProjectID, Session.ProjectCustomColumnsGet(sourceProjectID));
+            Session.ProjectCustomColumnsSet(targetProjectID, Session.ProjectCustomColumnsGet(sourceProjectID), new HPMProjectCustomColumnChangeHashes());
         }
 
         private void CloneReports(HPMUniqueID sourceProjectID, HPMUniqueID targetProjectID)
         {
             foreach (HPMUniqueID resourceID in Session.ProjectEnumReportResources(sourceProjectID).m_Resources)
                 Session.ProjectSetReports(targetProjectID, resourceID, Session.ProjectGetReports(sourceProjectID, resourceID));
-        }
-
-        private void ClonePresets(HPMUniqueID sourceProjectID, HPMUniqueID targetProjectID)
-        {
-            Session.ProjectSetViewPresets(targetProjectID, Session.ProjectGetViewPresets(sourceProjectID));
         }
 
         private void CloneWorkflows(HPMUniqueID sourceProjectID, HPMUniqueID targetProjectID)
