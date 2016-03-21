@@ -69,5 +69,18 @@ namespace Hansoft.ObjectWrapper
                 if (Priority != value) Session.TaskSetSprintPriority(UniqueTaskID, (EHPMTaskAgilePriorityCategory)value.Value);
             }
         }
+
+        /// <summary>
+        /// Return true if this items only exists in a sprnt backlog, no reference to a backlog item
+        /// </summary>
+        /// <returns>True if in sprint backlog only</returns>
+        public bool IsOnlyInSprintBacklog
+        {
+            get
+            {
+                HPMUniqueID proxy = Session.TaskGetProxy(UniqueTaskID);
+                return proxy != null;
+            }
+        }
     }
 }

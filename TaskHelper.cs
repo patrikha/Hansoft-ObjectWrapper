@@ -74,7 +74,7 @@ namespace Hansoft.ObjectWrapper
             return (Sprint) Task.GetTask(uid);
         else
             return null;
-    }
+        }
 
         internal static List<User> GetAssignees(Task task)
         {
