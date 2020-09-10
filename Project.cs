@@ -59,8 +59,6 @@ namespace Hansoft.ObjectWrapper
             get
             {
                 HPMUniqueID qaProjectID = Session.ProjectUtilGetQA(UniqueID);
-                if (qaProjectID.m_ID == -1)
-                    qaProjectID = Session.ProjectOpenQAProjectBlock(UniqueID);
                 return qaProjectID;
             }
         }
@@ -70,8 +68,6 @@ namespace Hansoft.ObjectWrapper
             get
             {
                 HPMUniqueID backlogProjectID = Session.ProjectUtilGetBacklog(UniqueID);
-                if (backlogProjectID.m_ID == -1)
-                    backlogProjectID = Session.ProjectOpenBacklogProjectBlock(UniqueID);
                 return backlogProjectID;
             }
         }
@@ -386,7 +382,9 @@ namespace Hansoft.ObjectWrapper
 
         private void CloneColumns(HPMUniqueID sourceProjectID, HPMUniqueID targetProjectID)
         {
-            Session.ProjectCustomColumnsSet(targetProjectID, Session.ProjectCustomColumnsGet(sourceProjectID), new HPMProjectCustomColumnChangeHashes());
+            var changes = new HPMProjectCustomColumnChanges();
+            changes.m_ProjectID = targetProjectID;
+            Session.ProjectCustomColumnsSet(changes);
         }
 
         private void CloneReports(HPMUniqueID sourceProjectID, HPMUniqueID targetProjectID)
